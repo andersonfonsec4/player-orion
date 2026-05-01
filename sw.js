@@ -1,9 +1,8 @@
-const CACHE_NAME = "orion-player-v6";
+const CACHE_NAME = "orion-player-v1";
 
-// 🔥 BASE dinâmica (funciona local + GitHub Pages)
-const BASE = self.location.pathname.replace("/sw.js", "");
+// 🔥 BASE FIXA (GitHub Pages)
+const BASE = "/orion-player";
 
-// arquivos principais
 const APP_ASSETS = [
   BASE + "/",
   BASE + "/index.html",
@@ -16,36 +15,22 @@ const APP_ASSETS = [
   BASE + "/assets/default-cover.png",
 ];
 
-// ==========================
-// INSTALL (ROBUSTO)
-// ==========================
+// INSTALL
 self.addEventListener("install", (event) => {
   self.skipWaiting();
 
   event.waitUntil(
-    caches.open(CACHE_NAME).then(async (cache) => {
-      for (const url of APP_ASSETS) {
-        try {
-          await cache.add(url);
-        } catch (err) {
-          console.warn("Erro ao cachear:", url);
-        }
-      }
-    }),
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_ASSETS)),
   );
 });
 
-// ==========================
-// ACTIVATE (limpa antigo)
-// ==========================
+// ACTIVATE
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
         keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
+          if (key !== CACHE_NAME) return caches.delete(key);
         }),
       ),
     ),
@@ -54,22 +39,19 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// ==========================
-// FETCH (CACHE FIRST)
-// ==========================
+// FETCH
 self.addEventListener("fetch", (event) => {
   const request = event.request;
 
-  // ❌ não interceptar áudio
+  // não intercepta áudio
   if (request.destination === "audio") return;
 
   event.respondWith(
-    caches.match(request, { ignoreSearch: true }).then((cached) => {
+    caches.match(request).then((cached) => {
       if (cached) return cached;
 
       return fetch(request)
         .then((response) => {
-          // cache dinâmico seguro
           if (
             request.method === "GET" &&
             response.status === 200 &&
@@ -85,7 +67,6 @@ self.addEventListener("fetch", (event) => {
           return response;
         })
         .catch(() => {
-          // fallback offline
           return caches.match(BASE + "/index.html");
         });
     }),
