@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="OrionPlayer" />
+    <meta name="theme-color" content="#020617" />
+
+    <title>OrionPlayer</title>
+
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="assets/icon.png" />
+    <link rel="manifest" href="manifest.json" />
+  </head>
+
+  <body>
+    <!-- 🎵 BOTÃO -->
+    <button id="addMusicFloat">🎵</button>
+
+    <!-- 🔹 TOPO MOBILE (LOGO + PLAYLIST) -->
+    <div class="mobile-top">
+      <img src="assets/logo.png" alt="Orion Player" class="mobile-logo" />
+
+      <div id="miniPlaylist"></div>
+    </div>
+
+    <!-- 🔹 OVERLAY -->
+    <div id="overlay"></div>
+
+    <div class="app">
+      <!-- 🔹 SIDEBAR -->
+      <aside class="sidebar" id="sidebar">
+        <div class="brand">
+          <img src="assets/logo.png" alt="Orion Player" />
+        </div>
+
+        <label class="upload-btn" id="dropZone">
+          🎵 Adicionar músicas
+          <input type="file" id="fileInput" accept="audio/*" multiple hidden />
+        </label>
+
+        <p class="drop-hint">ou arraste arquivos aqui</p>
+
+        <ul id="playlistUI"></ul>
+      </aside>
+
+      <!-- 🔹 MAIN -->
+      <main class="main">
+        <div class="vinyl">
+          <img id="cover" src="assets/default-cover.png" alt="Capa do álbum" />
+        </div>
+
+        <p id="trackName">Nenhuma música carregada</p>
+        <p id="timeDisplay">00:00 / 00:00</p>
+
+        <audio id="audio"></audio>
+
+        <!-- CONTROLES -->
+        <div class="controls">
+          <button id="shuffleBtn" title="Embaralhar">🔀</button>
+          <button id="prevBtn" title="Anterior">⏮</button>
+          <button id="playBtn" class="play" title="Play/Pause">▶</button>
+          <button id="nextBtn" title="Próxima">⏭</button>
+          <button id="repeatBtn" title="Repetir">🔁</button>
+        </div>
+
+        <!-- VOLUME -->
+        <div class="volume-control">
+          <button id="muteBtn" title="Silenciar">🔊</button>
+          <input
+            type="range"
+            id="volume"
+            min="0"
+            max="1"
+            step="0.01"
+            value="1"
+          />
+        </div>
+      </main>
+    </div>
+
+    <!-- 🔻 PLAYER BAR -->
+    <div class="bottom-bar">
+      <div class="bottom-left">
+        <img
+          id="miniCover"
+          src="assets/default-cover.png"
+          alt="Capa da música"
+        />
+        <div class="track-info">
+          <span id="miniTrackName">Nenhuma música</span>
+        </div>
+      </div>
+
+      <div class="bottom-center">
+        <span id="currentTime">00:00</span>
+        <input type="range" id="progress" value="0" step="1" />
+        <span id="totalTime">00:00</span>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsmediatags/dist/jsmediatags.min.js"></script>
+    <script src="player.js"></script>
+  </body>
+</html>
