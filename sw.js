@@ -1,6 +1,5 @@
-const CACHE_NAME = "orion-player-v1";
+const CACHE_NAME = "orion-player-v2"; // 🔥 IMPORTANTE: mudou versão
 
-// 🔥 BASE FIXA (GitHub Pages)
 const BASE = "/orion-player";
 
 const APP_ASSETS = [
@@ -20,7 +19,18 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_ASSETS)),
+    caches.open(CACHE_NAME).then(async (cache) => {
+      for (const url of APP_ASSETS) {
+        try {
+          const response = await fetch(url, { cache: "no-cache" });
+          if (response.ok) {
+            await cache.put(url, response.clone());
+          }
+        } catch (err) {
+          console.warn("Falha ao cachear:", url);
+        }
+      }
+    }),
   );
 });
 
@@ -48,9 +58,7 @@ self.addEventListener("fetch", (event) => {
 
   event.respondWith(
     caches.match(request).then((cached) => {
-      if (cached) return cached;
-
-      return fetch(request)
+      const fetchPromise = fetch(request)
         .then((response) => {
           if (
             request.method === "GET" &&
@@ -63,12 +71,11 @@ self.addEventListener("fetch", (event) => {
               cache.put(request, clone);
             });
           }
-
           return response;
         })
-        .catch(() => {
-          return caches.match(BASE + "/index.html");
-        });
+        .catch(() => cached);
+
+      return cached || fetchPromise;
     }),
   );
 });
