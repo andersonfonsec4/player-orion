@@ -38,7 +38,7 @@ body {
 .sidebar {
   width: 280px;
   min-width: 280px;
-  background: rgba(15, 23, 42, 0.85);
+  background: rgba(15, 23, 42, 0.9);
   backdrop-filter: blur(18px);
   border-right: 1px solid rgba(255, 255, 255, 0.05);
   padding: 18px;
@@ -97,12 +97,12 @@ body {
   border-radius: 8px;
   margin-bottom: 4px;
   cursor: grab;
-  transition: 0.2s;
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  transition: all 0.2s ease;
 }
 
 #playlistUI li:hover {
-  background: rgba(56, 189, 248, 0.08);
+  transform: translateX(4px);
 }
 
 #playlistUI li.active {
@@ -143,22 +143,24 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 18px;
+  gap: 24px;
   text-align: center;
+  padding-bottom: 90px; /* espaço pra bottom bar */
 }
 
 /* VINIL */
 .vinyl {
-  width: 230px;
-  height: 230px;
+  width: 270px;
+  height: 270px;
   border-radius: 50%;
   background: radial-gradient(circle, #000 40%, #020617 100%);
   display: flex;
   align-items: center;
   justify-content: center;
+
   box-shadow:
-    0 0 40px rgba(56, 189, 248, 0.25),
-    inset 0 0 30px rgba(0, 0, 0, 0.6);
+    0 0 80px rgba(56, 189, 248, 0.35),
+    inset 0 0 50px rgba(0, 0, 0, 0.7);
 }
 
 .vinyl img {
@@ -169,12 +171,10 @@ body {
   transition: transform 0.3s ease;
 }
 
-.vinyl.playing {
-  animation: spin 6s linear infinite;
-}
 
-.vinyl.playing img {
-  transform: scale(1.05);
+
+.vinyl.playing {
+  animation: spin 5s linear infinite;
 }
 
 @keyframes spin {
@@ -185,13 +185,13 @@ body {
 
 /* TEXTO */
 #trackName {
-  font-size: 16px;
-  max-width: 320px;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
 }
 
 #timeDisplay {
-  font-size: 13px;
-  color: #94a3b8;
+  font-size: 14px;
 }
 
 /* CONTROLES */
@@ -199,7 +199,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
+  gap: 18px;
 }
 
 button {
@@ -209,23 +209,23 @@ button {
   padding: 10px;
   color: #e2e8f0;
   cursor: pointer;
-  transition: 0.2s;
+  transition: all 0.2s ease;
 }
 
-button:hover,
-button.active {
+button:hover {
   background: #38bdf8;
   color: #020617;
 }
 
 #playBtn {
-  width: 60px;
-  height: 60px;
-  font-size: 18px;
+  width: 70px;
+  height: 70px;
+  font-size: 20px;
+
   background: #38bdf8;
   color: #020617;
-  transform: scale(1.2);
-  box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
+
+  box-shadow: 0 0 50px rgba(56, 189, 248, 0.9);
 }
 
 /* VOLUME */
@@ -257,14 +257,14 @@ button.active {
   position: fixed;
   bottom: 0;
   width: 100%;
-  height: 70px;
+  height: 75px;
   background: rgba(15, 23, 42, 0.9);
   backdrop-filter: blur(10px);
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 15px;
+  padding: 0 20px;
 }
 
 .bottom-left {
@@ -289,7 +289,7 @@ button.active {
 #progress {
   flex: 1;
   appearance: none;
-  height: 4px;
+  height: 5px;
   background: #1e293b;
   border-radius: 5px;
 }
@@ -344,10 +344,10 @@ button.active {
     position: relative;
   }
 
-  .vinyl {
-    width: 200px;
-    height: 200px;
-  }
+ .vinyl {
+  width: 200px;
+  height: 200px;
+}
 
   .vinyl img {
     width: 100px;
