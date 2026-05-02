@@ -1,6 +1,6 @@
-const CACHE_NAME = "orion-player-v3"; // 🔥 sempre mudar ao atualizar
+const CACHE_NAME = "orion-player-v4"; // 🔥 sempre mudar ao atualizar
 
-const BASE = "/orion-player";
+const BASE = "/player-orion";
 
 const APP_ASSETS = [
   BASE + "/",

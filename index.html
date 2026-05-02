@@ -26,13 +26,9 @@
 
     <title>OrionPlayer</title>
 
-    <!-- Estilos -->
+    <!-- 🔥 IMPORTANTE: caminhos relativos -->
     <link rel="stylesheet" href="./style.css" />
-
-    <!-- Ícone -->
     <link rel="icon" href="./assets/icon.png" />
-
-    <!-- Manifest -->
     <link rel="manifest" href="./manifest.json" />
   </head>
 
@@ -152,5 +148,15 @@
     ></script>
 
     <script src="./player.js" defer></script>
+
+    <!-- 🔥 SERVICE WORKER (ESSENCIAL PRA FUNCIONAR NO GITHUB) -->
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("./sw.js")
+          .then(() => console.log("SW registrado"))
+          .catch((err) => console.log("Erro SW:", err));
+      }
+    </script>
   </body>
 </html>
