@@ -1,11 +1,13 @@
 {
-  "name": "OrionPlayer",
+  "name": "Orion Player",
   "short_name": "Orion",
-  "start_url": "./",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#020617",
   "theme_color": "#020617",
+  "description": "Player de música offline moderno, rápido e minimalista.",
   "icons": [
     {
       "src": "assets/icon-192.png",

@@ -34,35 +34,35 @@ let isShuffle = false;
 let repeatMode = 0;
 let currentObjectURL = null;
 let draggedIndex = null;
+let fadeInterval = null;
 
 const DEFAULT_COVER = "assets/default-cover.png";
 
 // ==========================
-// 🎧 FADE
+// 🎧 FADE CONTROLADO
 // ==========================
 function fadeIn() {
-  const targetVolume = parseFloat(volumeSlider.value) || 1;
+  clearInterval(fadeInterval);
 
+  const targetVolume = parseFloat(volumeSlider.value) || 1;
   audio.volume = 0;
   audio.play();
 
-  let interval = setInterval(() => {
+  fadeInterval = setInterval(() => {
     audio.volume = Math.min(audio.volume + 0.05, targetVolume);
-
-    if (audio.volume >= targetVolume) {
-      audio.volume = targetVolume;
-      clearInterval(interval);
-    }
+    if (audio.volume >= targetVolume) clearInterval(fadeInterval);
   }, 20);
 }
 
 function fadeOut() {
+  clearInterval(fadeInterval);
+
   return new Promise((resolve) => {
-    let interval = setInterval(() => {
+    fadeInterval = setInterval(() => {
       audio.volume = Math.max(audio.volume - 0.05, 0);
 
       if (audio.volume <= 0) {
-        clearInterval(interval);
+        clearInterval(fadeInterval);
         audio.pause();
         audio.volume = parseFloat(volumeSlider.value) || 1;
         resolve();
@@ -72,7 +72,7 @@ function fadeOut() {
 }
 
 // ==========================
-// SEGURANÇA EXTRA
+// SEGURANÇA
 // ==========================
 audio.addEventListener("play", () => {
   if (audio.volume === 0) {
@@ -80,22 +80,33 @@ audio.addEventListener("play", () => {
   }
 });
 
+audio.addEventListener("error", () => {
+  console.log("Erro ao carregar áudio");
+});
+
 // ==========================
 // ARQUIVOS
 // ==========================
 function handleFiles(files) {
-  const valid = Array.from(files).filter((f) => f.type.startsWith("audio/"));
+  const valid = Array.from(files).filter((f) =>
+    f.type.startsWith("audio/")
+  );
 
   if (!valid.length) return;
 
   playlist = [...playlist, ...valid];
 
-  if (!audio.src) loadTrack(0);
+  if (!audio.src) {
+    loadTrack(0);
+    fadeIn();
+  }
 
   renderPlaylist();
 }
 
-fileInput.addEventListener("change", (e) => handleFiles(e.target.files));
+fileInput.addEventListener("change", (e) =>
+  handleFiles(e.target.files)
+);
 
 dropZone.addEventListener("dragover", (e) => e.preventDefault());
 dropZone.addEventListener("drop", (e) => {
@@ -118,9 +129,7 @@ function renderMiniPlaylist() {
     const name = file.name.replace(/\.[^/.]+$/, "");
     div.textContent = name.slice(0, 20);
 
-    if (index === currentIndex) {
-      div.classList.add("active");
-    }
+    if (index === currentIndex) div.classList.add("active");
 
     div.onclick = async () => {
       currentIndex = index;
@@ -141,11 +150,13 @@ function renderPlaylist() {
   playlistUI.innerHTML = "";
 
   playlist.forEach((file, index) => {
+    const cleanName = file.name.replace(/\.[^/.]+$/, "");
+
     const li = document.createElement("li");
     li.draggable = true;
 
     li.innerHTML = `
-      <span class="track-name">${file.name}</span>
+      <span class="track-name">${cleanName}</span>
       <span class="remove-btn">🗑️</span>
     `;
 
@@ -161,26 +172,21 @@ function renderPlaylist() {
 
     li.querySelector(".remove-btn").onclick = (e) => {
       e.stopPropagation();
+
       playlist.splice(index, 1);
-      if (index < currentIndex) {
-        currentIndex--;
-      } else if (index === currentIndex) {
-        if (playlist.length === 0) {
-          audio.src = "";
-          trackName.textContent = "Nenhuma música carregada";
-          miniTrackName.textContent = "Nenhuma música";
-          cover.src = DEFAULT_COVER;
-          miniCover.src = DEFAULT_COVER;
-          vinyl.classList.remove("playing");
-          playBtn.textContent = "▶";
-        } else {
-          currentIndex = Math.min(currentIndex, playlist.length - 1);
-          loadTrack(currentIndex);
-        }
+
+      if (index < currentIndex) currentIndex--;
+
+      if (playlist.length === 0) resetPlayer();
+      else {
+        currentIndex = Math.min(currentIndex, playlist.length - 1);
+        loadTrack(currentIndex);
       }
+
       renderPlaylist();
     };
 
+    // DRAG
     li.addEventListener("dragstart", () => {
       draggedIndex = index;
       li.classList.add("dragging");
@@ -197,21 +203,24 @@ function renderPlaylist() {
 
       if (draggedIndex === null) return;
 
-      const targetIndex = index;
       const item = playlist.splice(draggedIndex, 1)[0];
-      let insertIndex = targetIndex;
-      if (draggedIndex < targetIndex) {
-        insertIndex--;
-      }
+      let insertIndex = index;
+
+      if (draggedIndex < index) insertIndex--;
+
       playlist.splice(insertIndex, 0, item);
 
-      if (draggedIndex === currentIndex) {
-        currentIndex = insertIndex;
-      } else if (draggedIndex < currentIndex && insertIndex >= currentIndex) {
+      if (draggedIndex === currentIndex) currentIndex = insertIndex;
+      else if (
+        draggedIndex < currentIndex &&
+        insertIndex >= currentIndex
+      )
         currentIndex--;
-      } else if (draggedIndex > currentIndex && insertIndex <= currentIndex) {
+      else if (
+        draggedIndex > currentIndex &&
+        insertIndex <= currentIndex
+      )
         currentIndex++;
-      }
 
       draggedIndex = null;
       renderPlaylist();
@@ -239,17 +248,19 @@ function loadTrack(index) {
   trackName.textContent = name;
   miniTrackName.textContent = name;
 
+  playBtn.textContent = "▶";
+  vinyl.classList.remove("playing");
+
   if (window.jsmediatags) {
     jsmediatags.read(file, {
-      onSuccess: function (tag) {
-        const picture = tag.tags.picture;
+      onSuccess: (tag) => {
+        const pic = tag.tags.picture;
 
-        if (picture) {
-          let base64 = "";
-          picture.data.forEach((b) => (base64 += String.fromCharCode(b)));
-
-          const url = `data:${picture.format};base64,${btoa(base64)}`;
-
+        if (pic) {
+          const base64 = btoa(
+            String.fromCharCode(...pic.data)
+          );
+          const url = `data:${pic.format};base64,${base64}`;
           cover.src = url;
           miniCover.src = url;
         } else {
@@ -267,8 +278,20 @@ function loadTrack(index) {
     miniCover.src = DEFAULT_COVER;
   }
 
-  // 🔥 GARANTE SINCRONIZAÇÃO
   renderMiniPlaylist();
+}
+
+// ==========================
+// RESET
+// ==========================
+function resetPlayer() {
+  audio.src = "";
+  trackName.textContent = "Nenhuma música carregada";
+  miniTrackName.textContent = "Nenhuma música";
+  cover.src = DEFAULT_COVER;
+  miniCover.src = DEFAULT_COVER;
+  vinyl.classList.remove("playing");
+  playBtn.textContent = "▶";
 }
 
 // ==========================
@@ -299,7 +322,6 @@ nextBtn.onclick = async () => {
 
   loadTrack(currentIndex);
   fadeIn();
-  renderMiniPlaylist();
 };
 
 prevBtn.onclick = async () => {
@@ -307,11 +329,11 @@ prevBtn.onclick = async () => {
 
   await fadeOut();
 
-  currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
+  currentIndex =
+    (currentIndex - 1 + playlist.length) % playlist.length;
 
   loadTrack(currentIndex);
   fadeIn();
-  renderMiniPlaylist();
 };
 
 // ==========================
@@ -333,16 +355,12 @@ audio.addEventListener("ended", async () => {
     : currentIndex + 1;
 
   if (currentIndex >= playlist.length) {
-    if (repeatMode === 1) {
-      currentIndex = 0;
-    } else {
-      return;
-    }
+    if (repeatMode === 1) currentIndex = 0;
+    else return;
   }
 
   loadTrack(currentIndex);
   fadeIn();
-  renderMiniPlaylist();
 });
 
 // ==========================
@@ -355,22 +373,21 @@ shuffleBtn.onclick = () => {
 
 repeatBtn.onclick = () => {
   repeatMode = (repeatMode + 1) % 3;
+
   repeatBtn.classList.toggle("active", repeatMode > 0);
-  if (repeatMode === 2) {
-    repeatBtn.textContent = "🔂";
-  } else if (repeatMode === 1) {
-    repeatBtn.textContent = "🔁";
-  } else {
-    repeatBtn.textContent = "🔁";
-  }
+
+  repeatBtn.textContent =
+    repeatMode === 2 ? "🔂" : "🔁";
 };
 
 // ==========================
 // PROGRESS
 // ==========================
 audio.ontimeupdate = () => {
-  progress.value = audio.currentTime;
-  progress.max = audio.duration || 0;
+  if (!isNaN(audio.duration)) {
+    progress.max = audio.duration;
+    progress.value = audio.currentTime;
+  }
 
   currentTimeEl.textContent = formatTime(audio.currentTime);
   totalTimeEl.textContent = formatTime(audio.duration);
@@ -385,33 +402,35 @@ progress.oninput = () => {
 // ==========================
 volumeSlider.oninput = () => {
   audio.volume = volumeSlider.value;
+  localStorage.setItem("volume", volumeSlider.value);
 };
 
-muteBtn.onclick = () => {
-  if (audio.volume > 0) {
-    audio.volume = 0;
-    muteBtn.textContent = "🔇";
-  } else {
-    audio.volume = volumeSlider.value || 1;
-    muteBtn.textContent = "🔊";
+window.addEventListener("load", () => {
+  const saved = localStorage.getItem("volume");
+  if (saved !== null) {
+    volumeSlider.value = saved;
+    audio.volume = saved;
   }
+});
+
+muteBtn.onclick = () => {
+  audio.muted = !audio.muted;
+  muteBtn.textContent = audio.muted ? "🔇" : "🔊";
 };
 
 // ==========================
 // UTIL
 // ==========================
 function formatTime(t) {
-  if (!t) return "00:00";
+  if (!t || isNaN(t)) return "00:00";
   const m = Math.floor(t / 60);
   const s = Math.floor(t % 60);
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
 // ==========================
-// MOBILE BOTÃO
+// MOBILE
 // ==========================
 if (addMusicFloat) {
-  addMusicFloat.onclick = () => {
-    fileInput.click();
-  };
+  addMusicFloat.onclick = () => fileInput.click();
 }

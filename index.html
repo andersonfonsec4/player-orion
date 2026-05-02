@@ -2,11 +2,13 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
+
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
 
+    <!-- PWA / Mobile -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta
       name="apple-mobile-web-app-status-bar-style"
@@ -14,23 +16,33 @@
     />
     <meta name="apple-mobile-web-app-title" content="OrionPlayer" />
     <meta name="theme-color" content="#020617" />
+    <meta name="color-scheme" content="dark light" />
+
+    <!-- SEO -->
+    <meta
+      name="description"
+      content="Orion Player - Player de música offline moderno"
+    />
 
     <title>OrionPlayer</title>
-    <base href="/orion-player/" />
 
-    <link rel="stylesheet" href="style.css" />
-    <link rel="icon" href="assets/icon.png" />
-    <link rel="manifest" href="manifest.json" />
+    <!-- Estilos -->
+    <link rel="stylesheet" href="./style.css" />
+
+    <!-- Ícone -->
+    <link rel="icon" href="./assets/icon.png" />
+
+    <!-- Manifest -->
+    <link rel="manifest" href="./manifest.json" />
   </head>
 
   <body>
     <!-- 🎵 BOTÃO -->
-    <button id="addMusicFloat">🎵</button>
+    <button id="addMusicFloat" aria-label="Adicionar músicas">🎵</button>
 
-    <!-- 🔹 TOPO MOBILE (LOGO + PLAYLIST) -->
+    <!-- 🔹 TOPO MOBILE -->
     <div class="mobile-top">
-      <img src="assets/logo.png" alt="Orion Player" class="mobile-logo" />
-
+      <img src="./assets/logo.png" alt="Orion Player" class="mobile-logo" />
       <div id="miniPlaylist"></div>
     </div>
 
@@ -41,12 +53,18 @@
       <!-- 🔹 SIDEBAR -->
       <aside class="sidebar" id="sidebar">
         <div class="brand">
-          <img src="assets/logo.png" alt="Orion Player" />
+          <img src="./assets/logo.png" alt="Orion Player" />
         </div>
 
         <label class="upload-btn" id="dropZone">
           🎵 Adicionar músicas
-          <input type="file" id="fileInput" accept="audio/*" multiple hidden />
+          <input
+            type="file"
+            id="fileInput"
+            accept="audio/*"
+            multiple
+            hidden
+          />
         </label>
 
         <p class="drop-hint">ou arraste arquivos aqui</p>
@@ -57,19 +75,30 @@
       <!-- 🔹 MAIN -->
       <main class="main">
         <div class="vinyl">
-          <img id="cover" src="assets/default-cover.png" alt="Capa do álbum" />
+          <img
+            id="cover"
+            src="./assets/default-cover.png"
+            alt="Capa do álbum"
+          />
         </div>
 
         <p id="trackName">Nenhuma música carregada</p>
         <p id="timeDisplay">00:00 / 00:00</p>
 
-        <audio id="audio"></audio>
+        <audio id="audio" preload="metadata"></audio>
 
         <!-- CONTROLES -->
         <div class="controls">
           <button id="shuffleBtn" title="Embaralhar">🔀</button>
           <button id="prevBtn" title="Anterior">⏮</button>
-          <button id="playBtn" class="play" title="Play/Pause">▶</button>
+          <button
+            id="playBtn"
+            class="play"
+            title="Play/Pause"
+            aria-label="Play ou Pausar"
+          >
+            ▶
+          </button>
           <button id="nextBtn" title="Próxima">⏭</button>
           <button id="repeatBtn" title="Repetir">🔁</button>
         </div>
@@ -94,7 +123,7 @@
       <div class="bottom-left">
         <img
           id="miniCover"
-          src="assets/default-cover.png"
+          src="./assets/default-cover.png"
           alt="Capa da música"
         />
         <div class="track-info">
@@ -104,12 +133,24 @@
 
       <div class="bottom-center">
         <span id="currentTime">00:00</span>
-        <input type="range" id="progress" value="0" step="1" />
+        <input
+          type="range"
+          id="progress"
+          value="0"
+          min="0"
+          max="100"
+          step="1"
+        />
         <span id="totalTime">00:00</span>
       </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/jsmediatags/dist/jsmediatags.min.js"></script>
-    <script src="player.js"></script>
+    <!-- Scripts -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/jsmediatags/dist/jsmediatags.min.js"
+      defer
+    ></script>
+
+    <script src="./player.js" defer></script>
   </body>
 </html>

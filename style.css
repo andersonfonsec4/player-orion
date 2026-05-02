@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════
-   🎧 ORION PLAYER — PRO UI FINAL AJUSTADO
+   🎧 ORION PLAYER — PRO UI OTIMIZADO
    ════════════════════════════════════════ */
 
 /* RESET */
@@ -9,6 +9,7 @@
   box-sizing: border-box;
 }
 
+/* BASE */
 body {
   font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
   background: radial-gradient(circle at center, #020617 0%, #020617 100%);
@@ -16,7 +17,8 @@ body {
   height: 100vh;
   overflow: hidden;
 }
-/* ESCONDER BOTÃO POR PADRÃO (DESKTOP) */
+
+/* ESCONDER BOTÃO MOBILE NO DESKTOP */
 #addMusicFloat {
   display: none;
 }
@@ -27,7 +29,7 @@ body {
   height: 100vh;
 }
 
-/* MOBILE TOP (ESCONDIDO NO DESKTOP) */
+/* MOBILE TOP (PADRÃO OFF) */
 .mobile-top {
   display: none;
 }
@@ -56,7 +58,7 @@ body {
   opacity: 0.9;
 }
 
-/* BOTÃO */
+/* BOTÃO UPLOAD */
 .upload-btn {
   background: linear-gradient(135deg, #38bdf8, #0ea5e9);
   color: #020617;
@@ -81,16 +83,6 @@ body {
   text-align: center;
 }
 
-/* BUSCA */
-.search-input {
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(30, 41, 59, 0.6);
-  color: #e2e8f0;
-  margin-bottom: 12px;
-}
-
 /* PLAYLIST */
 #playlistUI {
   flex: 1;
@@ -107,10 +99,6 @@ body {
   cursor: grab;
   transition: 0.2s;
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-}
-
-#playlistUI li:active {
-  cursor: grabbing;
 }
 
 #playlistUI li:hover {
@@ -183,9 +171,6 @@ body {
 
 .vinyl.playing {
   animation: spin 6s linear infinite;
-  box-shadow:
-    0 0 60px rgba(56, 189, 248, 0.4),
-    inset 0 0 40px rgba(0, 0, 0, 0.6);
 }
 
 .vinyl.playing img {
@@ -193,9 +178,6 @@ body {
 }
 
 @keyframes spin {
-  from {
-    transform: rotate(0);
-  }
   to {
     transform: rotate(360deg);
   }
@@ -230,11 +212,7 @@ button {
   transition: 0.2s;
 }
 
-button:hover {
-  background: #38bdf8;
-  color: #020617;
-}
-
+button:hover,
 button.active {
   background: #38bdf8;
   color: #020617;
@@ -248,10 +226,6 @@ button.active {
   color: #020617;
   transform: scale(1.2);
   box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
-}
-
-#playBtn:active {
-  transform: scale(1.1);
 }
 
 /* VOLUME */
@@ -282,7 +256,6 @@ button.active {
 .bottom-bar {
   position: fixed;
   bottom: 0;
-  left: 0;
   width: 100%;
   height: 70px;
   background: rgba(15, 23, 42, 0.9);
@@ -329,27 +302,34 @@ button.active {
   border-radius: 50%;
 }
 
-/* ════════════════════════════════════════
-   📱 MOBILE PRO (UNIFICADO E LIMPO)
-   ════════════════════════════════════════ */
+/* OVERLAY */
+#overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s;
+  z-index: 998;
+}
 
+#overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* MOBILE */
 @media (max-width: 768px) {
-  body {
-    overflow: hidden;
-  }
-
   .app {
     flex-direction: column;
   }
 
-  /* TOPO MOBILE */
-
-  /* SIDEBAR */
   .sidebar {
     position: fixed;
-    top: 0;
     left: -100%;
-    width: 80%;
+    width: 85%;
+    max-width: 320px;
     height: 100%;
     z-index: 999;
     transition: 0.3s;
@@ -359,14 +339,11 @@ button.active {
     left: 0;
   }
 
-  /* ESCONDER BUSCA */
-  .search-container {
-    display: none;
+  .main {
+    margin-top: 70px;
+    position: relative;
   }
 
-  /* MAIN */
-
-  /* VINIL */
   .vinyl {
     width: 200px;
     height: 200px;
@@ -377,17 +354,10 @@ button.active {
     height: 100px;
   }
 
-  /* CONTROLES */
-  .controls {
-    gap: 10px;
-  }
-
-  /* VOLUME */
   .volume-control {
     width: 90%;
   }
 
-  /* BOTTOM SIMPLIFICADO */
   .bottom-left,
   .track-info {
     display: none;
@@ -397,214 +367,67 @@ button.active {
     width: 100%;
   }
 
-  .bottom-bar {
-    padding: 10px;
-  }
-}
-/* ════════════════════════════════════════
-   🔥 MOBILE APP UX (OVERLAY + POLIMENTO)
-   ════════════════════════════════════════ */
-
-/* OVERLAY (fundo escuro quando menu abre) */
-#overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-
-  opacity: 0;
-  pointer-events: none;
-
-  transition: 0.3s;
-
-  z-index: 998;
-}
-
-#overlay.active {
-  opacity: 1;
-  pointer-events: all;
-}
-
-/* MELHORIAS MOBILE */
-@media (max-width: 768px) {
-  /* SIDEBAR MAIS NATURAL */
-  .sidebar {
-    width: 85%;
-    max-width: 320px;
-  }
-
-  /* LISTA MAIS USÁVEL */
-  #playlistUI {
-    padding-bottom: 100px;
-  }
-
-  /* MAIN MAIS CENTRAL */
-  .main {
-    justify-content: center;
-  }
-
-  /* VINIL MAIS NATURAL */
-  .vinyl {
-    margin-top: 20px;
-  }
-
-  /* CONTROLES MELHOR ESPAÇADOS */
-  .controls {
-    margin-top: 10px;
-  }
-
-  /* BOTÕES MAIS TOUCH FRIENDLY */
-  button {
-    padding: 12px;
-  }
-
-  /* PROGRESS BAR MAIS VISÍVEL */
-  #progress {
-    height: 6px;
-  }
-}
-/* MINI PLAYER EXPANSÍVEL */
-
-#playlistUI li {
-  cursor: grab;
-}
-
-#playlistUI li.dragging {
-  opacity: 0.4;
-}
-
-#playlistUI li:active {
-  cursor: grabbing;
-}
-/* BOTÃO ADICIONAR MÚSICA - MOBILE */
-@media (max-width: 768px) {
-  .main {
-    position: relative;
-  }
-
+  /* BOTÃO FLUTUANTE */
   #addMusicFloat {
     position: absolute;
     right: 16px;
     top: 42%;
     transform: translateY(-50%);
-
     width: 56px;
     height: 56px;
-
     border-radius: 50%;
-    border: none;
-
     background: linear-gradient(135deg, #38bdf8, #0ea5e9);
     color: #020617;
-
     font-size: 24px;
-    cursor: pointer;
-
-    box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
-
     display: flex;
     align-items: center;
     justify-content: center;
-
+    box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
     z-index: 10;
   }
-}
 
-/* MOSTRAR SOMENTE NO MOBILE */
-@media (max-width: 768px) {
-  #addMusicFloat {
+  /* MOBILE TOP */
+  .mobile-top {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    max-height: 110px;
+    overflow-y: auto;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
   }
-}
-/* ════════════════════════════════════════
-   🎵 MINI PLAYLIST MOBILE
-   ════════════════════════════════════════ */
 
-.mobile-top {
-  display: none;
-}
-
-@media (max-width: 768px) {
   .mobile-logo {
     width: 80px;
     opacity: 0.85;
     margin-bottom: 4px;
   }
-  .mobile-top {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 
-    position: fixed;
-    top: 0;
-    width: 100%;
-
-    padding: 5px 8px;
-
-    max-height: 110px;
-
-    overflow-x: hidden;
-    overflow-y: auto;
-    background: rgba(15, 23, 42, 0.85);
-    backdrop-filter: blur(10px);
-
-    z-index: 1000;
-  }
-
-  /* MINI PLAYLIST */
   #miniPlaylist {
     display: flex;
     gap: 8px;
-
     overflow-x: auto;
-    overflow-y: hidden;
-
     width: 100%;
-
-    padding-top: 6px;
-    padding-bottom: 6px;
-
+    padding: 6px;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
-
-    scroll-behavior: smooth;
   }
 
   .mini-track {
     min-width: 110px;
     padding: 6px 10px;
     border-radius: 10px;
-
     background: rgba(30, 41, 59, 0.8);
     font-size: 12px;
-
     white-space: nowrap;
     cursor: pointer;
-    transition: 0.2s;
-  }
-
-  .mini-track:hover {
-    background: rgba(56, 189, 248, 0.2);
   }
 
   .mini-track.active {
     background: #38bdf8;
     color: #020617;
-    box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
-  }
-  /* AJUSTE MAIN (compensa topo maior) */
-
-  /* AJUSTE BOTÃO FLOAT */
-}
-
-@media (max-width: 768px) {
-  .main {
-    margin-top: 70px;
-    position: relative;
   }
 }
