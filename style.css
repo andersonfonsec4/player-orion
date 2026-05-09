@@ -108,6 +108,12 @@ body {
 #playlistUI li.active {
   background: linear-gradient(90deg, #2563eb, #38bdf8);
   color: white;
+
+  box-shadow:
+    0 0 12px rgba(56, 189, 248, 0.45),
+    0 0 20px rgba(56, 189, 248, 0.15);
+
+  transform: translateX(4px);
 }
 
 .track-name {
@@ -145,7 +151,13 @@ body {
   justify-content: center;
   gap: 24px;
   text-align: center;
-  padding-bottom: 90px; /* espaço pra bottom bar */
+  padding-bottom: 90px;
+
+  background: radial-gradient(
+    circle at center,
+    rgba(56, 189, 248, 0.08),
+    transparent 60%
+  );
 }
 
 /* VINIL */
@@ -157,9 +169,19 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 
   box-shadow:
     0 0 80px rgba(56, 189, 248, 0.35),
+    inset 0 0 50px rgba(0, 0, 0, 0.7);
+}
+.vinyl:hover {
+  transform: scale(1.02);
+
+  box-shadow:
+    0 0 100px rgba(56, 189, 248, 0.4),
     inset 0 0 50px rgba(0, 0, 0, 0.7);
 }
 
@@ -170,8 +192,6 @@ body {
   object-fit: cover;
   transition: transform 0.3s ease;
 }
-
-
 
 .vinyl.playing {
   animation: spin 5s linear infinite;
@@ -344,10 +364,10 @@ button:hover {
     position: relative;
   }
 
- .vinyl {
-  width: 200px;
-  height: 200px;
-}
+  .vinyl {
+    width: 200px;
+    height: 200px;
+  }
 
   .vinyl img {
     width: 100px;
@@ -429,5 +449,62 @@ button:hover {
   .mini-track.active {
     background: #38bdf8;
     color: #020617;
+  }
+}
+/* ==========================
+   EQUALIZER
+========================== */
+
+.equalizer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 5px;
+  height: 24px;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.equalizer span {
+  width: 5px;
+  height: 10px;
+  border-radius: 10px;
+  background: #38bdf8;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+
+  animation: equalize 1s infinite ease-in-out;
+}
+
+/* tempos diferentes */
+.equalizer span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.equalizer span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.equalizer span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.equalizer span:nth-child(4) {
+  animation-delay: 0.1s;
+}
+
+@keyframes equalize {
+  0% {
+    height: 8px;
+    opacity: 0.5;
+  }
+
+  50% {
+    height: 24px;
+    opacity: 1;
+  }
+
+  100% {
+    height: 10px;
+    opacity: 0.6;
   }
 }

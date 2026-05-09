@@ -15,6 +15,7 @@ const volumeSlider = document.getElementById("volume");
 const muteBtn = document.getElementById("muteBtn");
 const cover = document.getElementById("cover");
 const vinyl = document.querySelector(".vinyl");
+const equalizer = document.querySelector(".equalizer");
 
 const miniCover = document.getElementById("miniCover");
 const miniTrackName = document.getElementById("miniTrackName");
@@ -102,11 +103,13 @@ function handleFiles(files) {
   }
 
   renderPlaylist();
+  savePlaylist();
 }
 
 fileInput.addEventListener("change", (e) =>
   handleFiles(e.target.files)
 );
+
 
 dropZone.addEventListener("dragover", (e) => e.preventDefault());
 dropZone.addEventListener("drop", (e) => {
@@ -184,6 +187,7 @@ function renderPlaylist() {
       }
 
       renderPlaylist();
+       savePlaylist();
     };
 
     // DRAG
@@ -224,6 +228,7 @@ function renderPlaylist() {
 
       draggedIndex = null;
       renderPlaylist();
+        savePlaylist();
     });
 
     playlistUI.appendChild(li);
@@ -291,6 +296,7 @@ function resetPlayer() {
   cover.src = DEFAULT_COVER;
   miniCover.src = DEFAULT_COVER;
   vinyl.classList.remove("playing");
+  equalizer.style.opacity = "0.2";
   playBtn.textContent = "▶";
 }
 
@@ -303,6 +309,7 @@ playBtn.onclick = async () => {
   if (audio.paused) {
     fadeIn();
     vinyl.classList.add("playing");
+    equalizer.style.opacity = "1";
     playBtn.textContent = "⏸";
   } else {
     await fadeOut();
@@ -427,7 +434,45 @@ function formatTime(t) {
   const s = Math.floor(t % 60);
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
+// ==========================
+// SALVAR PLAYLIST
+// ==========================
+function savePlaylist() {
+  const names = playlist.map(file => file.name);
 
+  localStorage.setItem(
+    "orion_playlist",
+    JSON.stringify(names)
+  );
+}
+// ==========================
+// RESTAURAR PLAYLIST
+// ==========================
+window.addEventListener("load", () => {
+  const savedPlaylist =
+    localStorage.getItem("orion_playlist");
+
+  if (!savedPlaylist) return;
+
+  const names = JSON.parse(savedPlaylist);
+
+  if (!names.length) return;
+
+  playlistUI.innerHTML = "";
+
+  names.forEach((name) => {
+    const li = document.createElement("li");
+
+    li.innerHTML = `
+      <span class="track-name">${name}</span>
+    `;
+
+    playlistUI.appendChild(li);
+  });
+
+  trackName.textContent =
+    "Selecione novamente suas músicas";
+});
 // ==========================
 // MOBILE
 // ==========================
