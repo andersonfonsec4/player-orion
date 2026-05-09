@@ -1,4 +1,4 @@
-const CACHE_NAME = "orion-player-v4"; // 🔥 sempre mudar ao atualizar
+const CACHE_NAME = "orion-player-v5"; // 🔥 sempre mudar ao atualizar
 
 const BASE = "/player-orion";
 
